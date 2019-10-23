@@ -1,10 +1,10 @@
 #pragma once
 #include "Entity.h"
 
-class Player : public Entity
+class Player final : public Entity
 {
 public:
-	Player(Game* game, std::string& fileName, sf::Vector3f position, float radius, EntityType type, EntityFaction faction);
+	Player(Game* game, sf::Vector2f position);
 	~Player();
 
 	void Update(float deltaTime) override;
@@ -12,11 +12,11 @@ public:
 
 private:
 // Functions	
-	void Movement();
+	void Movement(float deltaTime);
 	void Shooting();
 
 // Fields
-	
+	float mLastShot;
+	sf::Clock mShootTimer;
 	
 };
-

@@ -1,10 +1,12 @@
 #include "Entity.h"
 
-Entity::Entity(Game* game, std::string& fileName, sf::Vector3f position, const float radius, const EntityType type,
-               const EntityFaction faction)
-	: mGame(game), mRadius(radius), mType(type), mFaction(faction)
+Entity::Entity(Game* game, const std::string& fileName, const sf::Vector2f position, const float radFactor, const EntityType type, const EntityFaction faction)
+	: mGame(game), mRadFactor(radFactor), mType(type), mFaction(faction)
 {
 	mSprite = sf::Sprite(game->GetTexture(fileName));
+	mRadius = mSprite.getTexture()->getSize().x / 2.0f;
+	mSprite.setPosition(position.x, position.y);
+
 }
 
 Entity::~Entity()
@@ -28,7 +30,7 @@ EntityFaction Entity::GetFaction()
 
 sf::Vector2f Entity::GetPosition()
 {
-	return sf::Vector2f(mSprite.getPosition().x, mSprite.getPosition().y);	
+	return sf::Vector2f(mSprite.getPosition().x, mSprite.getPosition().y);
 }
 
 sf::Sprite Entity::GetSprite()

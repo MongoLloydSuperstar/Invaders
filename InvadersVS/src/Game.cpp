@@ -1,8 +1,12 @@
 #include "Game.h"
+#include <utility>
 #include "Entity/Entity.h"
+#include "Entity/Player.h"
+#include "Entity/Invader.h"
+#include "Entity/Bullet.h"
 
-TextureResource::TextureResource(std::string& fileName, sf::Texture& texture)
-	: mFileName(fileName), mTexture(texture)
+TextureResource::TextureResource(std::string fileName, sf::Texture& texture)
+	: mFileName(std::move(fileName)), mTexture(texture)
 {
 }
 
@@ -24,6 +28,9 @@ sf::Texture& TextureResource::GetTexture()
 
 static const std::string HEADER = "Invaders";
 constexpr float RES_X = 600, RES_Y = 900;
+constexpr float SPAWN_START_TIME = 3.0f;
+constexpr float SPAWN_COOLDOWN = 1.0f;
+
 
 Game::Game()
 	: mRenderWindow(sf::VideoMode(RES_X,RES_Y), HEADER)
@@ -53,9 +60,13 @@ Game::~Game()
 
 void Game::Run()
 {
+	AddEntity(new Player(this, sf::Vector2f(100, 500)));	
+	sf::Clock updateTimer;
+	
 	while (mRenderWindow.isOpen())
 	{
 		sf::Event event{};
+		
 		while (mRenderWindow.pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed)
@@ -64,9 +75,13 @@ void Game::Run()
 			}
 		}
 
+
 		mRenderWindow.clear(sf::Color::Black);
 
-		UpdateEntities();
+		const float deltaTime = updateTimer.restart().asSeconds();
+
+		SpawnEnemies();
+		UpdateEntities(deltaTime);
 
 		DrawEntities(EntityType::PROJECTILE);
 		DrawEntities(EntityType::SHIP);
@@ -76,7 +91,7 @@ void Game::Run()
 	}
 }
 
-sf::Texture& Game::GetTexture(std::string& fileName)
+sf::Texture& Game::GetTexture(const std::string& fileName)
 {
 	for (TextureResource* textureResource : mTextureResources)
 		if (fileName == textureResource->GetFileName())
@@ -101,19 +116,20 @@ void Game::AddEntity(Entity* entity)
 	mNewEntities.push_back(entity);
 }
 
-void Game::UpdateEntities()
+void Game::UpdateEntities(const float deltaTime)
 {
-	const float deltaTime = mClock.restart().asSeconds();
 	
 	for (Entity* entity : mEntities)
-		entity->Update(deltaTime);	
-	
+		entity->Update(deltaTime);
+		
 	for (Entity* entity : mNewEntities)
 	{
-		entity->Update(deltaTime);
+		//entity->Update(deltaTime);
 		mEntities.push_back(entity);
 	}
-	mNewEntities.clear();	
+	mNewEntities.clear();
+	
+	DestroyOldEntities();
 }
 
 void Game::DrawEntities(const EntityType type)
@@ -127,9 +143,30 @@ void Game::DrawEntities(const EntityType type)
 
 void Game::DestroyOldEntities()
 {
-	for (Entity* entity : mOldEntities)
+	Entities alive;
+	
+	for (Entity* entity : mEntities)
 	{
-		delete entity;
+		if (entity->IsAlive())
+			alive.push_back(entity);
+		else
+			delete entity;
 	}
-	mOldEntities.clear();
+
+	mEntities = alive;	
+}
+
+void Game::SpawnEnemies()
+{
+	
+	if (mSpawnInvader && (mInvaderTimer.getElapsedTime().asSeconds())> SPAWN_COOLDOWN)
+	{
+		AddEntity(new Invader(this, sf::Vector2f(100, 100)));
+		mInvaderTimer.restart();
+	}
+	else if (!mSpawnInvader && mInvaderTimer.getElapsedTime().asSeconds() > SPAWN_START_TIME)
+	{
+		mSpawnInvader = true;
+		mInvaderTimer.restart();
+	}
 }
