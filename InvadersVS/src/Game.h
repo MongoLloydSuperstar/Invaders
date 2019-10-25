@@ -30,18 +30,29 @@ public:
 
 	sf::Texture& GetTexture(const std::string& fileName);
 	sf::RenderWindow& GetRenderWindow();
-
+	
+	bool IsVisible(Entity* e);
 	void AddEntity(Entity* entity);
+	void RemoveEntity(Entity* entity);
+
+	void SetGameOver();
 
 private:
 	typedef std::vector<TextureResource*> TextureResources;
 	typedef std::vector<Entity*> Entities;
+	
 // Functions
 	void UpdateEntities(float deltaTime);
-	void DrawEntities(EntityType type);	
-	void DestroyOldEntities();
+	void DrawEntities(EntityType type);
+	bool HasCollided(Entity* e, Entity* o);
+	void Collisions();
 
 	void SpawnEnemies();
+
+	bool IsOld(Entity* e);
+	void DestroyOldEntities();
+
+	void TestGameOver();
 
 	
 // Fields	
@@ -55,6 +66,8 @@ private:
 	bool mSpawnInvader = false;
 	float mLastSpawn;
 	sf::Clock mInvaderTimer;
+	float mCooldown;
 
+	bool mGameOver = false;
 };
 

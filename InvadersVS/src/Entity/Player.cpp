@@ -1,10 +1,11 @@
 #include "Player.h"
 #include "Bullet.h"
+#include <iostream>
 
 const std::string FILENAME = "Ship.psd";
 constexpr float RAD_FACTOR = 1.0f;
 constexpr float SPEED = 300.0f;
-constexpr float COOLDOWN = 1.5f;
+constexpr float COOLDOWN = 0.2f;
 
 
 Player::Player(Game* game, const sf::Vector2f position)
@@ -24,7 +25,12 @@ void Player::Update(const float deltaTime)
 
 void Player::Collision()
 {
+	mGame->SetGameOver();
+}
 
+std::string Player::GetTextureName()
+{
+	return FILENAME;
 }
 
 void Player::Movement(const float deltaTime)

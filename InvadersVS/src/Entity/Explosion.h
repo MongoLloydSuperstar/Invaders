@@ -8,14 +8,15 @@ public:
 	~Explosion();
 
 	void Update(float deltaTime) override;
-
 	void Collision() override;
+	static std::string GetTextureName();
+
 private:
 	// Functions	
 
 
 	// Fields
-
+	sf::Clock mLifeTimer;
 
 };
 

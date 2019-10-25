@@ -33,9 +33,26 @@ sf::Vector2f Entity::GetPosition()
 	return sf::Vector2f(mSprite.getPosition().x, mSprite.getPosition().y);
 }
 
+float Entity::GetRadius()
+{
+	return mRadius;
+}
+
 sf::Sprite Entity::GetSprite()
 {
 	return mSprite;
+}
+
+const sf::Texture* Entity::GetTexture()
+{
+	return mSprite.getTexture();
+}
+
+sf::Vector2f Entity::GetSpriteCenterPos()
+{
+	float y = GetPosition().y + (mSprite.getTexture()->getSize().y / 2);
+	float x = GetPosition().x + (mSprite.getTexture()->getSize().x / 2);
+	return sf::Vector2f(x, y);
 }
 
 void Entity::Kill()

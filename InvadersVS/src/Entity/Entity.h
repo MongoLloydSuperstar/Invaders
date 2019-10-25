@@ -16,7 +16,10 @@ public:
 	virtual EntityType GetType() final;
 	virtual EntityFaction GetFaction() final;
 	virtual sf::Vector2f GetPosition() final;
+	virtual float GetRadius() final;
 	virtual sf::Sprite GetSprite() final;
+	virtual const sf::Texture* GetTexture() final;
+	virtual sf::Vector2f GetSpriteCenterPos() final;
 
 	virtual void Kill() final;
 	virtual bool IsAlive() final;

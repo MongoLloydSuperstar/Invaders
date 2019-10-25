@@ -1,4 +1,5 @@
 #include "Bullet.h"
+#include <iostream>
 
 const std::string FILENAME = "Bullet.psd";
 constexpr float RAD_FACTOR = 1.0f;
@@ -34,6 +35,12 @@ void Bullet::Update(const float deltaTime)
 
 void Bullet::Collision()
 {
+	mGame->RemoveEntity(this);
+}
+
+std::string Bullet::GetTextureName()
+{
+	return FILENAME;
 }
 
 void Bullet::Movement(const float deltaTime)

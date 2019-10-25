@@ -9,6 +9,7 @@ public:
 
 	void Update(float deltaTime) override;
 	void Collision() override;
+	static std::string GetTextureName();
 
 private:
 // Functions	
